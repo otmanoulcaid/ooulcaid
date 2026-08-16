@@ -6,6 +6,9 @@
 kubeconfig*
 *.kubeconfig
 
+# K3s join token, written by p1's server into the shared folder
+node-token
+
 # OS / editors
 .DS_Store
 Thumbs.db

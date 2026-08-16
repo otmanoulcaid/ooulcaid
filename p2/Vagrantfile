@@ -1,0 +1,15 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-24.04"
+
+  # Only one machine in this part.
+  config.vm.define "ooulcaidS" do |server|
+    server.vm.hostname = "ooulcaidS"
+    server.vm.network "private_network", ip: "192.168.56.110"
+    server.vm.provider "virtualbox" do |v|
+      v.name = "ooulcaidS"
+      v.cpus = 1
+      v.memory = 1024
+    end
+    server.vm.provision "shell", path: "scripts/server.sh"
+  end
+end

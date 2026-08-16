@@ -1,0 +1,42 @@
+# One Ingress that chooses the application from the HOST of the request.
+#   Host: app1.com  -> app1
+#   Host: app2.com  -> app2
+#   anything else   -> app3
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apps
+spec:
+  rules:
+    - host: app1.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app1
+                port:
+                  number: 80
+
+    - host: app2.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app2
+                port:
+                  number: 80
+
+    # No host on this rule, so it matches every other name: app3 is the default.
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app3
+                port:
+                  number: 80
