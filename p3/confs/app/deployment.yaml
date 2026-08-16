@@ -19,7 +19,7 @@ spec:
         - name: playground
           # Version tracked by GitOps: bump this tag (v1 <-> v2), push,
           # and Argo CD rolls the new version out on its own.
-          image: wil42/playground:v1
+          image: wil42/playground:v2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
