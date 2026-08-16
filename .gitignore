@@ -1,0 +1,13 @@
+# Vagrant
+.vagrant/
+*.log
+
+# Kubernetes / local state
+kubeconfig*
+*.kubeconfig
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
