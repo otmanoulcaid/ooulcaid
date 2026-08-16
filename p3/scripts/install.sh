@@ -31,6 +31,7 @@ fi
 
 if ! exist k3d; then
     echo "==> 4/4  Installing k3d"
+    # curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sudo bash    
     choco install k3d --yes --no-progress
 fi
 

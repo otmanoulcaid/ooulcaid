@@ -1,17 +1,9 @@
----
-# The two namespaces required by the subject:
-#   argocd -> Argo CD itself
-#   dev    -> the application deployed by Argo CD from GitHub
 apiVersion: v1
 kind: Namespace
 metadata:
   name: argocd
-  labels:
-    app.kubernetes.io/part-of: inception-of-things
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: dev
-  labels:
-    app.kubernetes.io/part-of: inception-of-things

@@ -3,14 +3,10 @@ kind: Application
 metadata:
   name: playground
   namespace: argocd
-  finalizers:
-    # Cascade the deletion: removing the Application removes what it deployed.
-    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
 
   source:
-    # Public GitHub repository holding the manifests (login in the repo name).
     repoURL: https://github.com/otmanoulcaid/ooulcaid.git
     targetRevision: HEAD
     path: p3/confs/app
@@ -21,15 +17,5 @@ spec:
 
   syncPolicy:
     automated:
-      # Delete resources removed from Git.
       prune: true
-      # Revert any change made directly on the cluster (Git is the source of truth).
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m

@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: ooulcaid-playground
   namespace: dev
-  labels:
-    app: ooulcaid-playground
 spec:
   replicas: 1
   selector:
@@ -17,29 +15,6 @@ spec:
     spec:
       containers:
         - name: playground
-          # Version tracked by GitOps: bump this tag (v1 <-> v2), push,
-          # and Argo CD rolls the new version out on its own.
           image: wil42/playground:v2
-          imagePullPolicy: IfNotPresent
           ports:
-            - name: http
-              containerPort: 8888
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8888
-            initialDelaySeconds: 3
-            periodSeconds: 5
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8888
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          resources:
-            requests:
-              cpu: 50m
-              memory: 64Mi
-            limits:
-              cpu: 500m
-              memory: 256Mi
+            - containerPort: 8888
