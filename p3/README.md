@@ -31,6 +31,7 @@ p3/
 │       └── service.yaml         #    NodePort 30888
 └── scripts/
     ├── install.sh               # docker + kubectl + k3d (Debian/Ubuntu)
+    ├── uninstall.sh             # removes what install.sh installed
     ├── create_cluster.sh        # cluster + namespaces + Argo CD + Application
     ├── argocd_ui.sh             # password + opens the Argo CD web interface
     ├── switch_version.sh        # demo: bump v1 <-> v2 through Git
