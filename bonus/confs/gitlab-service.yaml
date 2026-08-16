@@ -1,0 +1,16 @@
+# Publishes GitLab on the NodePort 30929, which the cluster maps to the
+# port 8929 of my machine. That is how http://localhost:8929 reaches GitLab.
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-http
+  namespace: gitlab
+spec:
+  type: NodePort
+  selector:
+    app: webservice
+    release: gitlab
+  ports:
+    - port: 8181
+      targetPort: 8181
+      nodePort: 30929

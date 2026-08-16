@@ -1,0 +1,50 @@
+# Values for the official GitLab Helm chart, version 9.11.10 (GitLab 18.11.9).
+# The default install is ~30 pods, these values bring it down to 7.
+# Only settings that actually change a default are listed.
+
+global:
+  edition: ce
+  hosts:
+    domain: gitlab.local
+    https: false
+  ingress:
+    enabled: false              # we reach GitLab with a NodePort instead
+    configureCertmanager: false
+    tls:
+      enabled: false
+  kas:
+    enabled: false              # agent server for Kubernetes, not needed
+  registry:
+    enabled: false              # no Docker registry in this lab
+
+# Big pieces installed by default that we do not use.
+installCertmanager: false
+nginx-ingress:
+  enabled: false              # no ingress controller, we use a NodePort
+prometheus:
+  install: false
+gitlab-runner:
+  install: false
+registry:
+  enabled: false
+
+gitlab:
+  gitlab-exporter:
+    enabled: false              # metrics, not needed
+  toolbox:
+    enabled: false              # backup tooling, not needed
+  mailroom:
+    enabled: false              # incoming email, not needed
+  # One pod each instead of autoscaling groups (defaults are 2 to 10).
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+  gitlab-shell:
+    minReplicas: 1
+    maxReplicas: 1
+
+# Already off by default in this chart version, nothing to do here:
+# gitlab-zoekt, openbao, traefik, haproxy, envoy-gateway.
