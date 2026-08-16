@@ -30,9 +30,9 @@ p3/
 │       ├── deployment.yaml      #    wil42/playground, tag v1 or v2
 │       └── service.yaml         #    NodePort 30888
 └── scripts/
-    ├── install.sh               # docker + kubectl + k3d + argocd CLI (Debian/Ubuntu)
+    ├── install.sh               # docker + kubectl + k3d (Debian/Ubuntu)
     ├── create_cluster.sh        # cluster + namespaces + Argo CD + Application
-    ├── argocd_ui.sh             # credentials + port-forward to the Argo CD UI
+    ├── argocd_ui.sh             # password + opens the Argo CD web interface
     ├── switch_version.sh        # demo: bump v1 <-> v2 through Git
     └── destroy.sh               # delete the cluster
 ```

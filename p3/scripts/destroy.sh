@@ -1,19 +1,9 @@
-#!/usr/bin/env bash
-# =============================================================================
-# Inception-of-Things - Part 3
-# Deletes the K3d cluster created by create_cluster.sh.
-#
-# Usage:  ./destroy.sh
-# =============================================================================
-set -euo pipefail
+#!/bin/bash
+# Deletes the cluster. Everything inside it disappears with it.
 
-CLUSTER_NAME="${CLUSTER_NAME:-ooulcaid-iot}"
+set -e
 
-GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
+echo "==> Deleting the cluster 'ooulcaid-iot'"
+k3d cluster delete ooulcaid-iot
 
-if k3d cluster list --no-headers 2>/dev/null | awk '{print $1}' | grep -qx "${CLUSTER_NAME}"; then
-  echo -e "${GREEN}[+]${NC} Deleting the cluster '${CLUSTER_NAME}'"
-  k3d cluster delete "${CLUSTER_NAME}"
-else
-  echo -e "${YELLOW}[!]${NC} No cluster named '${CLUSTER_NAME}'"
-fi
+echo "Done."

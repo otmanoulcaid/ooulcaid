@@ -14,7 +14,7 @@
 
 ```bash
 cd p3/scripts
-./install.sh          # docker, kubectl, k3d, argocd CLI
+./install.sh          # docker, kubectl, k3d
 ./create_cluster.sh   # k3d cluster + argocd/dev namespaces + Argo CD + the app
 curl http://localhost:8888/
 ```

@@ -1,46 +1,46 @@
-#!/usr/bin/env bash
-# =============================================================================
-# Inception-of-Things - Part 3
-# Demo helper: switches the deployed image tag (v1 <-> v2) THROUGH GIT.
+#!/bin/bash
+# Changes the version of the application (v1 or v2).
 #
-# It only edits + commits + pushes the manifest. Nothing is applied to the
-# cluster by hand: Argo CD notices the new commit and rolls the change out.
+# The important idea: this script does NOT touch the cluster.
+# It only changes the file in Git and pushes it to GitHub.
+# Argo CD reads GitHub and updates the cluster by itself.
 #
-# Usage:  ./switch_version.sh v2
-# =============================================================================
-set -euo pipefail
+# Usage:  ./switch_version.sh v1
+#         ./switch_version.sh v2
 
-VERSION="${1:-}"
-IMAGE_REPO="wil42/playground"
+set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DEPLOYMENT="${SCRIPT_DIR}/../confs/app/deployment.yaml"
+cd "$(dirname "$0")"   # always work from the scripts/ folder
 
-GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
-log()  { echo -e "${GREEN}[+]${NC} $*"; }
-warn() { echo -e "${YELLOW}[!]${NC} $*"; }
-die()  { echo -e "${RED}[x]${NC} $*" >&2; exit 1; }
+VERSION=$1
 
-[[ "${VERSION}" =~ ^v[0-9]+$ ]] || die "usage: $0 <v1|v2>"
-[[ -f "${DEPLOYMENT}" ]] || die "manifest not found: ${DEPLOYMENT}"
-
-CURRENT="$(grep -oE "${IMAGE_REPO}:v[0-9]+" "${DEPLOYMENT}" | head -n1 | cut -d: -f2)"
-if [[ "${CURRENT}" == "${VERSION}" ]]; then
-  warn "Already pinned to ${VERSION} in Git, nothing to commit"
-else
-  log "Bumping ${IMAGE_REPO}: ${CURRENT} -> ${VERSION}"
-  sed -i "s#${IMAGE_REPO}:v[0-9]\+#${IMAGE_REPO}:${VERSION}#g" "${DEPLOYMENT}"
-  git -C "${SCRIPT_DIR}/.." add "$(basename "$(dirname "${DEPLOYMENT}")")/$(basename "${DEPLOYMENT}")" 2>/dev/null \
-    || git add "${DEPLOYMENT}"
-  git commit -m "p3: deploy playground ${VERSION}"
-  git push
-  log "Pushed. Argo CD polls the repository every 3 minutes."
+if [ "$VERSION" != "v1" ] && [ "$VERSION" != "v2" ]; then
+  echo "Usage: ./switch_version.sh v1"
+  echo "       ./switch_version.sh v2"
+  exit 1
 fi
 
-log "Force an immediate sync (optional):"
-echo "    kubectl patch application playground -n argocd --type merge \\"
-echo "      -p '{\"operation\":{\"initiatedBy\":{\"username\":\"admin\"},\"sync\":{\"revision\":\"HEAD\"}}}'"
+FILE=../confs/app/deployment.yaml
+
+echo "==> 1/4  Writing wil42/playground:$VERSION into $FILE"
+sed -i "s|wil42/playground:v.|wil42/playground:$VERSION|" $FILE
+grep "image:" $FILE
+
+echo "==> 2/4  Sending the change to GitHub"
+git add $FILE
+git commit -m "deploy playground $VERSION"
+git push
+
+echo "==> 3/4  Asking Argo CD to look at GitHub right now"
+# Without this, Argo CD would find the change on its own, but only
+# within 3 minutes (that is how often it checks the repository).
+kubectl annotate application playground -n argocd argocd.argoproj.io/refresh=hard --overwrite
+
+echo "==> 4/4  Waiting for the new version to be running"
+sleep 10
+kubectl rollout status deployment/ooulcaid-playground -n dev
+
 echo
-log "Then watch the rollout:"
-echo "    kubectl rollout status deployment/ooulcaid-playground -n dev"
-echo "    curl http://localhost:8888/"
+echo "The application now answers:"
+curl http://localhost:8888/
+echo
